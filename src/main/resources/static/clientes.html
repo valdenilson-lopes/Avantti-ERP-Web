@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Clientes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between mb-3">
+
+        <h2>Lista de Clientes</h2>
+
+        <a href="cadastro-cliente.html" class="btn btn-primary">
+            Novo Cliente
+        </a>
+
+    </div>
+
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <table class="table table-striped table-hover" id="tabelaClientes">
+
+                <thead class="table-dark">
+
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th width="150">Ações</th>
+                </tr>
+
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function carregarClientes(){
+
+        fetch("/clientes")
+            .then(response => response.json())
+            .then(clientes => {
+
+                let tabela = document.querySelector("#tabelaClientes tbody");
+
+                tabela.innerHTML = "";
+
+                clientes.forEach(cliente => {
+
+                    let linha = `
+<tr>
+<td>${cliente.id}</td>
+<td>${cliente.nome}</td>
+<td>${cliente.email}</td>
+<td>
+
+<button class="btn btn-sm btn-warning"
+onclick="editarCliente(${cliente.id})">
+Editar
+</button>
+
+<button class="btn btn-sm btn-danger"
+onclick="excluirCliente(${cliente.id})">
+Excluir
+</button>
+
+</td>
+</tr>
+`;
+
+                    tabela.innerHTML += linha;
+
+                });
+
+            });
+
+    }
+
+    function excluirCliente(id){
+
+        if(confirm("Deseja excluir este cliente?")){
+
+            fetch("/clientes/" + id, {
+
+                method: "DELETE"
+
+            })
+                .then(() => {
+
+                    alert("Cliente excluído com sucesso!");
+
+                    carregarClientes();
+
+                });
+
+        }
+
+    }
+
+    function editarCliente(id){
+
+        window.location.href = "/editar-cliente.html?id=" + id;
+
+    }
+
+    carregarClientes();
+
+</script>
+
+</body>
+</html>
